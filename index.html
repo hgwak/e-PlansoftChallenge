@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PDF Viewer PDF.js</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <div id="app">
+      <div role="toolbar" id="toolbar">
+        <div id="pager">
+          <button data-pager="prev">prev</button>
+          <button data-pager="next">next</button>
+        </div>
+        <div id="page-mode">
+          <label>Page Mode <input type="number" value="1" min="1"/></label>
+        </div>
+        <div id="box-size">
+          Height: <input id="height" type="number" value="100">
+          Width: <input id="width" type="number" value="100">
+        </div>
+      </div>
+      <div id="viewport-container"><div role="main" id="viewport"></div></div>
+    </div>
+    <div id="box-annotation"></div>
+    <script src="https://unpkg.com/pdfjs-dist@2.0.489/build/pdf.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+    <script>
+      let currentBoxHeight = "height:100px";
+      let currentBoxWidth = "width:100px";
+      let offsetTop;
+      let offsetLeft;
+      jQuery(document).ready(initApp);
+      function initApp() {
+        jQuery('#viewport').on('click', annotateArea);
+        jQuery('#box-size input').on('change', adjustBox);
+      }
+      function annotateArea(event) {
+        if(event) {
+          offsetTop = "top:" + event.pageY + "px";
+          offsetLeft = "left:" + event.pageX + "px";
+        }
+        $('#box-annotation').attr("style", offsetTop + ";" + offsetLeft + ";" + currentBoxHeight + ";" + currentBoxWidth);
+        $('#box-annotation').show();
+      }
+      function adjustBox(event) {
+        let newValueLocation = "#" + event.srcElement.id;
+        let newValue = $(newValueLocation).val();
+        let newValueStyle = event.srcElement.id + ":" + newValue + "px";
+        event.srcElement.id === "height" ? currentBoxHeight = newValueStyle : currentBoxWidth = newValueStyle;
+        annotateArea();
+      }
+    </script>
+    <script src="src/index.js"></script>
+    <script>
+      initPDFViewer("assets/sample.pdf");
+    </script>
+  </body>
+</html>
